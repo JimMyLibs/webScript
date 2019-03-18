@@ -18,13 +18,14 @@
 if(location.hostname.includes('map.baidu.com')){  
     window.onload = ()=>{ 
         setTimeout(()=>{  
-            var allTypes = ['passed','hasNotLook','willLook','looked','oneStar','twoStar','threeStar','willSelect'];
+            var allTypes = ['all','passed','hasNotLook','willLook','looked','oneStar','twoStar','threeStar','willSelect'];
             // 小区分类目录
             var allTypeObj = {
+                all: [],
                 passed: [],
                 hasNotLook: [],
                 willLook: [],
-                looked: ["银座金钻", "国际名园", "庐山花园","凯旋TRC", "汇泰大厦", "怡都大厦", "大中华汇展阁", "港岛银座", "星桂园-C座", "名仕阁", "好年华东门金座", "立新花园(人民北路)", "碧海富通城-三期", "碧海富通城-四期", "广兴源圣拿威湾美花园", "祥福雅居", "庐江春天公寓", "荔馨村南山区", "桃苑公寓", "澎柏·白金假日公寓", "大都汇大厦", "龙珠花园", "国际市长交流中心", "友谊大厦", "南洋大厦", "东海大厦", "宏丰大厦罗湖"],
+                looked: ["银座金钻", "国际名园", "庐山花园","凯旋TRC", "汇泰大厦", "怡都大厦", "大中华汇展阁", "港岛银座", "星桂园-C座", "名仕阁", "好年华东门金座", "立新花园(人民北路)", "碧海富通城-三期", "碧海富通城-四期", "广兴源圣拿威湾美花园", "祥福雅居", "庐江春天公寓", "荔馨村", "桃苑公寓", "澎柏·白金假日公寓", "大都汇大厦", "龙珠花园", "国际市长交流中心", "友谊大厦", "南洋大厦", "东海大厦", "宏丰大厦"],
                 oneStar: [],
                 twoStar: [],
                 threeStar: [],
@@ -85,23 +86,27 @@ if(location.hostname.includes('map.baidu.com')){
                     }
                 })
             })
+            allTypeObj.all = Array.from(jimMark).map(item=>item.innerText);
             // 打印汇总
             var allMarkedObj = {
-                passed: { name : "筛掉", sum : 0, marked: 0 },
-                hasNotLook: { name : "未看", sum : 0, marked: 0 },
-                willLook: { name : "计划", sum : 0, marked: 0 },
-                looked: { name : "已看", sum : 0, marked: 0 },
-                oneStar: { name : "一星", sum : 0, marked: 0 },
-                twoStar: { name : "二星", sum : 0, marked: 0 },
-                threeStar: { name : "三星", sum : 0, marked: 0 },
-                willSelect: { name : "待选", sum : 0, marked: 0 },
+                all: { '名称' : "总数", '总数' : '-',  '占比': '-',  '已标记': '-', '未标记': '-' },
+                passed: { '名称' : "筛掉", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                hasNotLook: { '名称' : "未看", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                willLook: { '名称' : "计划", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                looked: { '名称' : "已看", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                oneStar: { '名称' : "一星", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                twoStar: { '名称' : "二星", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                threeStar: { '名称' : "三星", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
+                willSelect: { '名称' : "待选", '总数' : 0,  '占比': 0 , '已标记': 0, '未标记': [] },
             }
             allTypes.map(item=>{
-                allMarkedObj[item].sum = allTypeObj[item].length;
-                allMarkedObj[item].marked = Array.from(document.getElementsByClassName('jimMark '+item)).length;
+                allMarkedObj[item]['总数'] = allTypeObj[item].length;
+                allMarkedObj[item]['占比'] = (allMarkedObj[item]['总数'] / allMarkedObj['all']['总数']).toFixed(2)*100 + '%';
+                allMarkedObj[item]['已标记']  = Array.from(document.getElementsByClassName('jimMark '+item)).length;
+                allMarkedObj[item]['未标记']  = allTypeObj[item].filter(cell=>!allTypeObj.all.includes(cell));
             })
 
-            console.table(Object.values(allMarkedObj), ["name","sum","marked"]);
+            console.table(Object.values(allMarkedObj), ['名称','总数', '占比', '已标记', '未标记']);
             console.log('百度地图收藏夹: 脚本执行完毕');    
         },3000)
     }
