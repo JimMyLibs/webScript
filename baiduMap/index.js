@@ -101,7 +101,7 @@ if(location.hostname.includes('map.baidu.com')){
             }
             allTypes.map(item=>{
                 allMarkedObj[item]['总数'] = allTypeObj[item].length;
-                allMarkedObj[item]['占比'] = (allMarkedObj[item]['总数'] / allMarkedObj['all']['总数']).toFixed(2)*100 + '%';
+                allMarkedObj[item]['占比'] = (allMarkedObj[item]['总数'] / allMarkedObj['all']['总数']).toFixed(3)*1000/10 + '%';
                 allMarkedObj[item]['已标记']  = Array.from(document.getElementsByClassName('jimMark '+item)).length;
                 allMarkedObj[item]['未标记']  = allTypeObj[item].filter(cell=>!allTypeObj.all.includes(cell));
             })
