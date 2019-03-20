@@ -21,11 +21,11 @@ window.onload = ()=>{
         var allTypes = ['passed','hasNotLook','willLook','looked','oneStar','twoStar','threeStar','willSelect'];
         // 小区分类目录
         var allTypeObj = {
-            passed: [],
+            passed: ["大中华汇展阁","丽湾国际公寓","罗湖金岸","汇商名苑","同泰时代中心",],
             hasNotLook: [],
-            willLook: [],
+            willLook: ['笋岗大厦', '同乐大厦', '朗钜御风庭', '东门金座', '丰湖花园'],
             looked: ["银座金钻", "国际名园", "庐山花园","凯旋TRC", "汇泰大厦", "怡都大厦", "大中华汇展阁", "港岛银座", "星桂园-C座", "名仕阁", "好年华东门金座", "立新花园(人民北路)", "碧海富通城-三期", "碧海富通城-四期", "广兴源圣拿威湾美花园", "祥福雅居", "庐江春天公寓", "荔馨村南山区", "桃苑公寓", "澎柏·白金假日公寓", "大都汇大厦", "龙珠花园", "国际市长交流中心", "友谊大厦", "南洋大厦", "东海大厦", "宏丰大厦罗湖"],
-            oneStar: [],
+            oneStar: ['汇泰大厦','国际名园','港岛银座','广兴源圣拿威湾美花园'],
             twoStar: [],
             threeStar: [],
             willSelect: [],            
@@ -41,17 +41,17 @@ window.onload = ()=>{
                 font-family: microsoft yahei;
                 line-height: 1.2;
             }
-            .jimMark.passed {
-                background: #9E9E9E;   
-            }
             .jimMark.hasNotLook {
                 background: #607D8B;   
+            }
+            .jimMark.looked {
+                background: #3385ff;   
             }
             .jimMark.willLook {
                 background: #FF9800;   
             }
-            .jimMark.looked {
-                background: #3385ff;   
+            .jimMark.passed {
+                background: #9E9E9E;   
             }
             .jimMark.oneStar {
                 background: #8BC34A;   
