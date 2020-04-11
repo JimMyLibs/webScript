@@ -9,7 +9,7 @@ if (location.hostname.includes('map.baidu.com')) {
     window.onload = () => {
         setTimeout(() => {
             const allData = {
-                all: {
+                jimMark: {
                     label: '全部',
                     color: '#607D8B',
                     table: { '名称': "总数", '总数': '-', '占比': '-', '已标记': '-', '未标记': '-' },// 所有百度地图的收藏点：手动收藏，自动抓取
@@ -79,32 +79,72 @@ if (location.hostname.includes('map.baidu.com')) {
             const allTypes = Object.keys(allData); // 所有分类            
             let type_list = {} // 小区分类目录
             let type_table = {} // 打印汇总
-            const styleTag = document.createElement('style'); // style: 生成样式
+            const styleTag = document.createElement('style'); // style: 生成样式           
             styleTag.innerHTML = `.jimMark {
+                                    display: none;  
                                     width: 50px;
                                     background: #607D8B;
                                     color: #fff;
                                     padding: 2px;
                                     font-family: microsoft yahei;
                                     line-height: 1.2;
+                                }
+                                .jimMark.active{
+                                    display: block;                                    
+                                }
+                                .switchDiv{
+                                    position: absolute;
+                                    top: 70px;
+                                    right: 10px;
+                                    background: #0000006b;
+                                    color: #fff;
+                                    text-align: center;
+                                }
+                                .switchDiv>div{
+                                    padding: 1px 1px;
+                                    cursor: pointer;
+                                    display: block;
+                                }
+                                .switchDiv>div.active{
+                                    background: #3385ff;
                                 }`
+            const switchDiv = document.createElement('div'); // 显隐开关
+            switchDiv.className = 'switchDiv';
+            window.switchType = function (type) {
+                const typeDiv = document.getElementsByClassName(type) // 所有开关
+                Array.from(typeDiv).map(item => {
+                    if (item.className.indexOf('active') > -1) {
+                        item.className = item.className.replace(/active/g, '');
+                    } else {
+                        item.className += ' active';
+                    }
+                })
+            }
             allTypes.map(item => {
                 type_list[item] = allData[item].list;
                 type_table[item] = allData[item].table;
                 styleTag.innerHTML += ` .jimMark.${item} {background: ${allData[item].color};}`
+                switchDiv.innerHTML += `<div class="jimMark ${item} active" onclick="switchType('${item}')">${allData[item].label}</div>`
             })
             document.head.appendChild(styleTag)
+            document.body.appendChild(switchDiv)
             console.log('百度地图收藏夹: 样式添加成功');
 
             const mark = document.getElementsByClassName('BMap_Marker') // 所有收藏夹            
             Array.from(mark).map(item => { // 标注所有收藏夹
-                item.innerHTML = `<div class="jimMark">${item.title}</div>`
+                item.innerHTML = `<div class="jimMark active">${item.title}</div>`
             })
             // 标注已看小区
-            const jimMark = document.getElementsByClassName('jimMark');
+            const jimMarkDiv = document.getElementsByClassName('jimMark');
             const isPrimarySchool = (item) => { return item.innerText.includes('小学') || item.innerText.includes('学校') || item.innerText.includes('一小'); }
             const isKindergarten = (item) => { return item.innerText.includes('幼儿园'); }
-            Array.from(jimMark).map(item => {
+            const type_list_allMarked = Array.from(jimMarkDiv).map(item => item.innerText)
+            const type_list_allInput = Object.values(type_list).reduce((sum, item) => { sum = sum.concat(item); return sum }, [])
+            type_list['jimMark'] = type_list_allMarked;
+            type_list['hasNotLook'] = type_list_allMarked.filter(item => type_list_allInput.indexOf(item) == -1)
+            type_list['kindergarten'] = Array.from(jimMarkDiv).filter(item => isKindergarten(item))
+            type_list['primarySchool'] = Array.from(jimMarkDiv).filter(item => isPrimarySchool(item))
+            Array.from(jimMarkDiv).map(item => {
                 allTypes.map(type => {
                     if (isPrimarySchool(item)) {
                         item.className = item.className + ' ' + 'primarySchool';
@@ -115,15 +155,12 @@ if (location.hostname.includes('map.baidu.com')) {
                     }
                 })
             })
-            type_list.all = Object.values(type_list).reduce((sum, item) => { sum = sum.concat(item); return sum }, [])
-            type_list['kindergarten'] = Array.from(jimMark).filter(item => isKindergarten(item))
-            type_list['primarySchool'] = Array.from(jimMark).filter(item => isPrimarySchool(item))
             // 打印汇总
             allTypes.map(item => {
                 type_table[item]['总数'] = type_list[item].length;
-                type_table[item]['占比'] = (type_table[item]['总数'] / type_table['all']['总数']).toFixed(3) * 1000 / 10 + '%';
+                type_table[item]['占比'] = (type_table[item]['总数'] / type_table['jimMark']['总数']).toFixed(3) * 1000 / 10 + '%';
                 type_table[item]['已标记'] = Array.from(document.getElementsByClassName('jimMark ' + item)).length;
-                type_table[item]['未标记'] = type_list[item].filter(cell => !type_list.all.includes(cell));
+                type_table[item]['未标记'] = type_list[item].filter(cell => !type_list.jimMark.includes(cell));
             })
             // 颜色说明
             console.log('%c↓颜色说明↓', "padding:5px 200px;background-image: -webkit-gradient(linear, left 0, right 0, from(rgb(444, 94, 170)), to(rgb(122, 152, 216)));-webkit-background-clip: text;-webkit-text-fill-color: #fff;font-size:20px;");
@@ -136,6 +173,6 @@ if (location.hostname.includes('map.baidu.com')) {
             console.groupEnd();
             console.table(Object.values(type_table), ['名称', '总数', '占比', '已标记', '未标记']);
             console.log('百度地图收藏夹: 脚本执行完毕');
-        }, 2000)
+        }, 5000)
     }
 }
